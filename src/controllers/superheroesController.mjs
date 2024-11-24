@@ -93,24 +93,24 @@ export async function editarSuperHeroesController(req, res) {
 }
 //borrar heroes
 export async function borrarSuperHeroePorIdController(req, res) {
-    try {
-        const { id } = req.params;
-        const superheroe = await superHeroRepository.borrarPorId(id);
-        if (!superheroe) {
-            return res.status(404).send({ error: 'Superhéroe no encontrado' });
-        }
-        const superheroeRenderizado = renderizarSuperHeroe(superheroe);
-        res.status(200).send({
-            message: 'Superhéroe eliminado exitosamente',
-            superheroe: superheroeRenderizado
-        });
-    } catch (error) {
-        console.error("Error en el controlador:", error.message);
-        if (error.message === 'ID no válido') {
-            return res.status(400).send({ error: 'ID no válido' });
-        }
-        res.status(500).send({ error: "Error al borrar el superhéroe" });
+  console.log('Controlador de eliminación llamado');
+  console.log('ID del superhéroe:', req.params.id);
+
+  try {
+    const { id } = req.params;
+    const superheroe = await superHeroRepository.borrarPorId(id);
+    
+    if (!superheroe) {
+      console.log('Superhéroe no encontrado');
+      return res.status(404).json({ error: 'Superhéroe no encontrado' });
     }
+
+    req.flash('success_msg', 'Superhéroe eliminado exitosamente');
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error("Error en el controlador de eliminación:", error);
+    res.status(500).json({ error: "Error al borrar el superhéroe" });
+  }
 }
 
 // Obtener superhéroe por ID
